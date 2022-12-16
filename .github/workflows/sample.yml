@@ -7,7 +7,7 @@ jobs:
   build:
     defaults:
       run:
-        working-directory: "/go/src/github.com/stormcat24/importer-source"
+        working-directory: . 
     runs-on: ubuntu-latest
     container:
       image: golang:1.17
