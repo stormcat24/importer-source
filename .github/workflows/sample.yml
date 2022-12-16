@@ -1,0 +1,30 @@
+name: stormcat24/importer-source/sample
+on:
+  push:
+    branches:
+    - main
+jobs:
+  build:
+    defaults:
+      run:
+        working-directory: "~/repo"
+    runs-on: ubuntu-latest
+    container:
+      image: golang:1.17
+    steps:
+    - uses: actions/checkout@v3.1.0
+    - name: restore_cache
+      uses: actions/cache@v3
+      with:
+        key: go-mod-v4-{{ checksum "go.sum" }}
+        restore-keys: go-mod-v4-{{ checksum "go.sum" }}
+        path: "/go/pkg/mod"
+    - name: Install Dependencies
+      run: go mod download
+    - name: Run tests
+      run: |-
+        mkdir -p /tmp/test-reports
+        gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+    - uses: actions/upload-artifact@v3.1.1
+      with:
+        path: "/tmp/test-reports"
