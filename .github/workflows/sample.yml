@@ -1,7 +1,9 @@
 name: stormcat24/importer-source/sample
+# comment out 1
 on:
   push:
     branches:
+    # comment out 2
     - main
 jobs:
   build:
@@ -19,12 +21,14 @@ jobs:
         key: go-mod-v4-{{ checksum "go.sum" }}
         restore-keys: go-mod-v4-{{ checksum "go.sum" }}
         path: "/go/pkg/mod"
+    # comment out 3
     - name: Install Dependencies
       run: go mod download
     - name: Run tests
       run: |-
         mkdir -p /tmp/test-reports
-        #gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+        # comment out
+        # gotestsum --junitfile /tmp/test-reports/unit-tests.xml
     - uses: actions/upload-artifact@v3.1.1
       with:
         path: "/tmp/test-reports"
