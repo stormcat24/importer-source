@@ -9,9 +9,9 @@ jobs:
       - image: circleci/golang:1.17
     steps:
       - checkout
-      - run:
-          name: Wait for db
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m -wait-retry-interval 5s
+      #- run:
+      #    name: Wait for db
+      #    command: dockerize -wait tcp://localhost:3306 -timeout 1m -wait-retry-interval 5s
       # comment out 3
       - restore_cache:
           keys:
@@ -47,4 +47,6 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - test
+      - test:
+          requires:
+            - build
