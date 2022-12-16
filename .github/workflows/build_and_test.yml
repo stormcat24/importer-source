@@ -35,6 +35,8 @@ jobs:
           MYSQL_DATABASE: test
           MYSQL_ROOT_PASSWORD: root
           MYSQL_ROOT_HOST: "%"
+    needs:
+    - build
     steps:
     - name: Run tests
       run: |-
