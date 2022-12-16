@@ -1,0 +1,63 @@
+name: stormcat24/importer-source/build_and_test_and_deploy
+on:
+  push:
+    branches:
+    - main
+jobs:
+  build:
+    defaults:
+      run:
+        working-directory: . 
+    runs-on: ubuntu-latest
+    container:
+      image: golang:1.17
+    steps:
+    - uses: actions/checkout@v3.1.0
+    - name: restore_cache
+      uses: actions/cache@v3
+      with:
+        key: go-mod-v4-{{ checksum "go.sum" }}
+        restore-keys: go-mod-v4-{{ checksum "go.sum" }}
+        path: "/go/pkg/mod"
+    - name: Install Dependencies
+      run: go mod download
+  test:
+    defaults:
+      run:
+        working-directory: . 
+    runs-on: ubuntu-latest
+    container:
+      image: golang:1.17
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: test
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_HOST: "%"
+    needs:
+    - build
+    steps:
+    - uses: actions/checkout@v3.1.0
+    - name: Run tests
+      run: |-
+        mkdir -p /tmp/test-reports
+        # comment out 4
+        # gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+    - uses: actions/upload-artifact@v3.1.1
+      with:
+        path: "/tmp/test-reports"
+  deploy:
+    environment:
+      name: approval
+    defaults:
+      run:
+        working-directory: . 
+    runs-on: ubuntu-latest
+    container:
+      image: golang:1.17
+    needs:
+    - test
+    steps:
+    - uses: actions/checkout@v3.1.0
+    - run: 'go version'
