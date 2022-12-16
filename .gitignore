@@ -22,3 +22,6 @@ vendor/
 /bin
 
 .DS_Store
+
+.env.local
+./log
